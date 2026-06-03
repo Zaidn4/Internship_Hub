@@ -1,0 +1,87 @@
+{
+  "nav": {
+    "portal": "Portail Étudiant",
+    "dashboard": "Tableau de bord",
+    "browse": "Parcourir les stages",
+    "saved": "Stages enregistrés",
+    "applications": "Mes candidatures",
+    "profile": "Mon profil",
+    "signout": "Se déconnecter"
+  },
+  "navbar": {
+    "dashboard": "Tableau de bord",
+    "internships": "Stages",
+    "applications": "Candidatures",
+    "saved": "Enregistrés",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "loading": "Chargement...",
+    "retry": "Réessayer",
+    "search": "Rechercher",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "internships": {
+    "browse": "Parcourir les stages",
+    "manage": "Mes offres de stage",
+    "postNew": "Publier un stage",
+    "applyNow": "Postuler",
+    "applied": "Candidature envoyée",
+    "closed": "Fermé",
+    "details": "Détails",
+    "noResults": "Aucun stage disponible",
+    "noMatches": "Aucun résultat trouvé"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "logout": "Se déconnecter",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe"
+  },
+  "internshipDetails": {
+    "messages": {
+      "loadError": "Échec du chargement des détails du stage.",
+      "applySuccess": "Candidature envoyée avec succès !",
+      "alreadyApplied": "Vous avez déjà postulé à ce stage.",
+      "applyError": "Échec de la candidature. Veuillez réessayer.",
+      "saveError": "Échec de la mise à jour du statut.",
+      "notFound": "Stage introuvable.",
+      "applicationsClosed": "Les candidatures sont fermées.",
+      "appliedSuccessMsg": "Vous avez postulé avec succès !"
+    },
+    "buttons": {
+      "goBack": "Retour",
+      "applied": "Candidature envoyée ✓",
+      "closed": "Fermé",
+      "applying": "Envoi en cours…",
+      "apply": "Postuler",
+      "backToBoard": "← Retour au tableau",
+      "saved": "🔖 Enregistré",
+      "saveForLater": "🔖 Enregistrer pour plus tard"
+    },
+    "type": {
+      "remote": "Télétravail",
+      "on-site": "Sur site",
+      "hybrid": "Hybride"
+    },
+    "company": {
+      "unknown": "Entreprise inconnue",
+      "visitWebsite": "Visiter le site web ↗"
+    },
+    "meta": {
+      "deadline": "Date limite : {{date}}",
+      "perMonth": "{{amount}} $ / mois"
+    },
+    "sections": {
+      "about": "À propos de ce rôle",
+      "skills": "Compétences requises"
+    }
+  }
+}

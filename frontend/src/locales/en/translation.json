@@ -1,0 +1,87 @@
+{
+  "nav": {
+    "portal": "Student Portal",
+    "dashboard": "Dashboard",
+    "browse": "Browse Internships",
+    "saved": "Saved Internships",
+    "applications": "My Applications",
+    "profile": "My Profile",
+    "signout": "Sign out"
+  },
+  "navbar": {
+    "dashboard": "Dashboard",
+    "internships": "Internships",
+    "applications": "Applications",
+    "saved": "Saved",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "common": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "search": "Search",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "internships": {
+    "browse": "Browse Internships",
+    "manage": "My Internship Listings",
+    "postNew": "Post New Internship",
+    "applyNow": "Apply Now",
+    "applied": "Applied",
+    "closed": "Closed",
+    "details": "Details",
+    "noResults": "No internships yet",
+    "noMatches": "No matches found"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Create Account",
+    "logout": "Sign Out",
+    "email": "Email address",
+    "password": "Password"
+  },
+  "internshipDetails": {
+    "messages": {
+      "loadError": "Failed to load internship details.",
+      "applySuccess": "Successfully applied to the internship!",
+      "alreadyApplied": "You have already applied to this internship.",
+      "applyError": "Failed to apply. Please try again.",
+      "saveError": "Failed to update saved status.",
+      "notFound": "Internship not found.",
+      "applicationsClosed": "Applications are closed.",
+      "appliedSuccessMsg": "You have successfully applied!"
+    },
+    "buttons": {
+      "goBack": "Go Back",
+      "applied": "Applied ✓",
+      "closed": "Closed",
+      "applying": "Applying…",
+      "apply": "Apply Now",
+      "backToBoard": "← Back to Board",
+      "saved": "🔖 Saved",
+      "saveForLater": "🔖 Save for Later"
+    },
+    "type": {
+      "remote": "Remote",
+      "on-site": "On-site",
+      "hybrid": "Hybrid"
+    },
+    "company": {
+      "unknown": "Unknown Company",
+      "visitWebsite": "Visit Website ↗"
+    },
+    "meta": {
+      "deadline": "Deadline: {{date}}",
+      "perMonth": "${{amount}} / mo"
+    },
+    "sections": {
+      "about": "About this Role",
+      "skills": "Required Skills"
+    }
+  }
+}
