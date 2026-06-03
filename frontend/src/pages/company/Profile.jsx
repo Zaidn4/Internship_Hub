@@ -14,13 +14,16 @@ const INITIAL = {
 // ── Field must live OUTSIDE CompanyProfile so React never remounts it ─────────
 // Defining a component inside a parent body causes React to treat it as a new
 // component type on every render → input loses focus after every keystroke.
-function Field({ label, name, type = 'text', placeholder, textarea, value, onChange, error }) {
+function Field({ label, icon, name, type = 'text', placeholder, textarea, value, onChange, error }) {
+  const labelStyle = {
+    display: 'flex', alignItems: 'center', gap: '0.35rem',
+    fontSize: '0.8rem', fontWeight: 600, color: '#64748b',
+    marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em',
+  }
   return (
     <div>
-      <label
-        htmlFor={`company-${name}`}
-        style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, color: '#475569', marginBottom: '0.4rem' }}
-      >
+      <label htmlFor={`company-${name}`} style={labelStyle}>
+        {icon && <span style={{ fontSize: '0.9rem', lineHeight: 1 }}>{icon}</span>}
         {label}
       </label>
       {textarea ? (
@@ -30,9 +33,9 @@ function Field({ label, name, type = 'text', placeholder, textarea, value, onCha
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          rows={4}
+          rows={6}
           className={`auth-input${error ? ' error' : ''}`}
-          style={{ resize: 'vertical', fontFamily: 'inherit' }}
+          style={{ resize: 'vertical', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box', minHeight: '140px' }}
         />
       ) : (
         <input
@@ -43,6 +46,7 @@ function Field({ label, name, type = 'text', placeholder, textarea, value, onCha
           onChange={onChange}
           placeholder={placeholder}
           className={`auth-input${error ? ' error' : ''}`}
+          style={{ width: '100%', boxSizing: 'border-box' }}
         />
       )}
       {error && (
@@ -98,75 +102,174 @@ export default function CompanyProfile() {
     }
   }
 
+  // ── Shared style tokens ─────────────────────────────────────────────────────
+  const card = {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '1rem',
+    padding: '1.5rem',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+  }
+
+  const accentLabel = {
+    fontSize: '0.72rem', fontWeight: 700, color: '#6366f1',
+    textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem',
+  }
+
+  const divider = {
+    borderTop: '1px solid #f1f5f9',
+    marginBottom: '1.25rem',
+    paddingTop: '1.25rem',
+  }
+
   return (
-    <div style={{ maxWidth: '680px' }}>
+    <div style={{ width: '100%' }}>
+      {/* ── Page-level 2-col grid ───────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '1.5rem', alignItems: 'start' }}>
 
-      {/* ── Avatar header ─────────────────────────────────────────────────── */}
-      <AvatarUpload user={user} onSuccess={updateUser} />
+        {/* ══════════════════════════════════════════════════════════════════
+            LEFT COLUMN — Logo / Avatar + Security
+        ══════════════════════════════════════════════════════════════════ */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
-      {/* ── Section title ───────────────────────────────────────────────── */}
-      <div style={{ marginBottom: '1.75rem' }}>
-        <h1 style={{ fontSize: '1.625rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.25rem', letterSpacing: '-0.02em' }}>
-          Company Profile
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
-          Update your company information visible to students.
-        </p>
-      </div>
-
-      {/* Card */}
-      <div style={{
-        background: '#ffffff', border: '1px solid #e2e8f0',
-        borderRadius: '1rem', padding: '1.75rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-      }}>
-        <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
-          <Field
-            label="Company Name"
-            name="company_name"
-            placeholder="Acme Corp"
-            value={form.company_name}
-            onChange={handleChange}
-            error={errors.company_name?.[0]}
-          />
-          <Field
-            label="Website"
-            name="website"
-            type="url"
-            placeholder="https://acme.com"
-            value={form.website}
-            onChange={handleChange}
-            error={errors.website?.[0]}
-          />
-          <Field
-            label="Description"
-            name="description"
-            placeholder="Tell students about your company…"
-            textarea
-            value={form.description}
-            onChange={handleChange}
-            error={errors.description?.[0]}
-          />
-
-          <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
-            <button
-              id="company-profile-save"
-              type="submit"
-              disabled={saving}
-              className="auth-btn"
-              style={{ width: 'auto', padding: '0.6875rem 1.75rem' }}
-            >
-              {saving && <span className="spinner" />}
-              {saving ? 'Saving…' : 'Save Changes'}
-            </button>
+          {/* Avatar / Logo card */}
+          <div style={card}>
+            <AvatarUpload user={user} onSuccess={updateUser} />
           </div>
-        </form>
+
+          {/* Company quick-stats card */}
+          <div style={card}>
+            <p style={accentLabel}>Company snapshot</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                <span style={{
+                  width: '32px', height: '32px', borderRadius: '0.5rem', flexShrink: 0,
+                  background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.9rem',
+                }}>🏢</span>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 500 }}>Company Name</p>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {form.company_name || <span style={{ color: '#cbd5e1' }}>Not set</span>}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                <span style={{
+                  width: '32px', height: '32px', borderRadius: '0.5rem', flexShrink: 0,
+                  background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.9rem',
+                }}>🌐</span>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 500 }}>Website</p>
+                  {form.website ? (
+                    <a
+                      href={form.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: '0.875rem', fontWeight: 600, color: '#4f46e5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', textDecoration: 'none' }}
+                    >
+                      {form.website.replace(/^https?:\/\//, '')}
+                    </a>
+                  ) : (
+                    <p style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>Not set</p>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Change Password */}
+          <ChangePasswordSection />
+
+        </div>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            RIGHT COLUMN — Main profile form
+        ══════════════════════════════════════════════════════════════════ */}
+        <div style={card}>
+          {/* Card header */}
+          <div style={{ marginBottom: '1.25rem', paddingBottom: '1.125rem', borderBottom: '1px solid #f1f5f9' }}>
+            <h2 style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.9375rem', letterSpacing: '-0.01em', marginBottom: '0.2rem' }}>
+              Company Profile
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.78rem', lineHeight: 1.5 }}>
+              Update your company information visible to students and recruiters.
+            </p>
+          </div>
+
+          <form id="company-profile-form" onSubmit={handleSubmit} noValidate>
+
+            {/* ── Section: Identity ──────────────────────────────────────── */}
+            <p style={accentLabel}>Identity</p>
+
+            {/* Row 1: Company Name + Website */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+              <Field
+                label="Company Name"
+                icon="🏢"
+                name="company_name"
+                placeholder="e.g. Acme Corp"
+                value={form.company_name}
+                onChange={handleChange}
+                error={errors.company_name?.[0]}
+              />
+              <Field
+                label="Website"
+                icon="🌐"
+                name="website"
+                type="url"
+                placeholder="https://acme.com"
+                value={form.website}
+                onChange={handleChange}
+                error={errors.website?.[0]}
+              />
+            </div>
+
+            {/* ── Section: About ─────────────────────────────────────────── */}
+            <div style={divider}>
+              <p style={accentLabel}>About the company</p>
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <Field
+                label="Description"
+                icon="📝"
+                name="description"
+                placeholder="Tell students about your company, culture, and the type of work you do…"
+                textarea
+                value={form.description}
+                onChange={handleChange}
+                error={errors.description?.[0]}
+              />
+              <p style={{ color: '#94a3b8', fontSize: '0.72rem', marginTop: '0.25rem', textAlign: 'right' }}>
+                {form.description.length} / 5000
+              </p>
+            </div>
+
+            {/* ── Submit ─────────────────────────────────────────────────── */}
+            <div style={{ paddingTop: '1.25rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                id="company-profile-save"
+                type="submit"
+                disabled={saving}
+                className="auth-btn"
+                style={{ width: 'auto', padding: '0.65rem 2.5rem' }}
+              >
+                {saving && <span className="spinner" />}
+                {saving ? 'Saving…' : 'Save Changes'}
+              </button>
+            </div>
+
+          </form>
+        </div>
+
       </div>
 
       <Toast toast={toast} onDismiss={() => setToast(null)} />
-
-      {/* ── Change Password ────────────────────────────────────── */}
-      <ChangePasswordSection />
     </div>
   )
 }

@@ -45,9 +45,13 @@ class StudentProfileController extends Controller
         // because Laravel treats absent-but-nullable as present-but-null,
         // and an empty-string submission still fails the 'file' check.
         $validated = $request->validate([
-            'university' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'bio'        => ['sometimes', 'nullable', 'string', 'max:2000'],
-            'cv'         => ['sometimes', 'nullable', 'file', 'mimes:pdf', 'max:2048'],
+            'university'    => ['sometimes', 'nullable', 'string', 'max:255'],
+            'bio'           => ['sometimes', 'nullable', 'string', 'max:2000'],
+            'cv'            => ['sometimes', 'nullable', 'file', 'mimes:pdf', 'max:2048'],
+            'phone'         => ['sometimes', 'nullable', 'string', 'max:30'],
+            'linkedin_link' => ['sometimes', 'nullable', 'url', 'max:255'],
+            'github_link'   => ['sometimes', 'nullable', 'url', 'max:255'],
+            'languages'     => ['sometimes', 'nullable', 'string', 'max:255'],
         ]);
 
         // ── Handle CV upload ──────────────────────────────────────────────────
@@ -71,7 +75,7 @@ class StudentProfileController extends Controller
         // can explicitly clear a field by sending an empty string — which is a
         // valid update. array_filter would incorrectly discard '' values.
         $updateData = [];
-        foreach (['university', 'bio', 'cv_path'] as $field) {
+        foreach (['university', 'bio', 'cv_path', 'phone', 'linkedin_link', 'github_link', 'languages'] as $field) {
             if (array_key_exists($field, $validated)) {
                 $updateData[$field] = $validated[$field];
             }
@@ -84,10 +88,14 @@ class StudentProfileController extends Controller
         return response()->json([
             'message' => 'Profile updated successfully.',
             'profile' => [
-                'id'         => $profile->id,
-                'university' => $profile->university,
-                'bio'        => $profile->bio,
-                'cv_path'    => $profile->cv_path,
+                'id'            => $profile->id,
+                'university'    => $profile->university,
+                'bio'           => $profile->bio,
+                'cv_path'       => $profile->cv_path,
+                'phone'         => $profile->phone,
+                'linkedin_link' => $profile->linkedin_link,
+                'github_link'   => $profile->github_link,
+                'languages'     => $profile->languages,
             ],
         ]);
     }

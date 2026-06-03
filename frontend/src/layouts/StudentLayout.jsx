@@ -1,28 +1,25 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
-import NotificationBell from '../components/common/NotificationBell'
+import StudentTopHeader from '../components/layout/StudentTopHeader'
 
 export default function StudentLayout() {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
 
-  // Defined inside the component so t() is always in scope and re-evaluates on language change
+  // Defined inside the component so t() re-evaluates on language change
   const NAV_ITEMS = [
-    { to: '/student/dashboard',    icon: '◈',  label: t('nav.dashboard')     },
-    { to: '/student/internships',  icon: '🔍', label: t('nav.browse')        },
-    { to: '/student/saved',        icon: '🔖', label: t('nav.saved')         },
-    { to: '/student/applications', icon: '📋', label: t('nav.applications')  },
-    { to: '/student/profile',      icon: '👤', label: t('nav.profile')       },
+    { to: '/student/dashboard',    icon: '◈',  label: t('nav.dashboard')    },
+    { to: '/student/internships',  icon: '🔍', label: t('nav.browse')       },
+    { to: '/student/saved',        icon: '🔖', label: t('nav.saved')        },
+    { to: '/student/applications', icon: '📋', label: t('nav.applications') },
+    { to: '/student/profile',      icon: '👤', label: t('nav.profile')      },
   ]
-
-  const initials = user?.name
-    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
-    : '??'
 
   return (
     <div className="flex min-h-screen" style={{ background: '#f8fafc' }}>
-      {/* ── Sidebar ─────────────────────────────────────────────────────── */}
+
+      {/* ── Sidebar ───────────────────────────────────────────────────────── */}
       <aside
         style={{
           width: '256px',
@@ -36,7 +33,7 @@ export default function StudentLayout() {
           zIndex: 40,
         }}
       >
-        {/* Logo */}
+        {/* Logo / Brand */}
         <div style={{ padding: '1.25rem 1rem 0.875rem', borderBottom: '1px solid #e2e8f0' }}>
           <div className="flex items-center gap-3">
             <div style={{
@@ -58,7 +55,7 @@ export default function StudentLayout() {
           </div>
         </div>
 
-        {/* Nav */}
+        {/* Navigation */}
         <nav style={{ flex: 1, padding: '0.75rem 0.625rem', display: 'flex', flexDirection: 'column', gap: '2px' }}>
           {NAV_ITEMS.map(({ to, icon, label }) => (
             <NavLink
@@ -90,65 +87,25 @@ export default function StudentLayout() {
             </NavLink>
           ))}
         </nav>
-
-        {/* User footer */}
-        <div style={{ padding: '0.875rem 1rem', borderTop: '1px solid #e2e8f0' }}>
-          <div className="flex items-center gap-2 mb-2.5">
-            {/* Avatar */}
-            <div style={{
-              width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-              background: user?.avatar_url ? 'transparent' : '#eef2ff',
-              border: '1px solid #c7d2fe',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.75rem', fontWeight: 700, color: '#4f46e5',
-              overflow: 'hidden',
-            }}>
-              {user?.avatar_url ? (
-                <img
-                  src={user.avatar_url}
-                  alt={user.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                initials
-              )}
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ color: '#0f172a', fontSize: '0.8125rem', fontWeight: 600,
-                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user?.name ?? 'Student'}
-              </p>
-              <p style={{ color: '#94a3b8', fontSize: '0.7rem',
-                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user?.email}
-              </p>
-            </div>
-            {/* Notification Bell */}
-            <div style={{ flexShrink: 0 }}>
-              <NotificationBell roleBase="/student" />
-            </div>
-          </div>
-          <button
-            id="student-logout-btn"
-            onClick={logout}
-            style={{
-              width: '100%', padding: '0.45rem', borderRadius: '0.5rem', border: '1px solid #fecaca',
-              background: '#fef2f2', color: '#dc2626',
-              fontSize: '0.8125rem', fontWeight: 500, cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#fee2e2'; e.currentTarget.style.borderColor = '#fca5a5' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.borderColor = '#fecaca' }}
-          >
-            {t('nav.signout')}
-          </button>
-        </div>
+        {/* ── No user footer here — moved to StudentTopHeader ── */}
       </aside>
 
-      {/* ── Main content ─────────────────────────────────────────────────── */}
-      <main style={{ marginLeft: '256px', flex: 1, minHeight: '100vh', padding: '2rem', background: '#f8fafc' }}>
-        <Outlet />
-      </main>
+      {/* ── Right column: TopHeader + page content ──────────────────────── */}
+      <div style={{ marginLeft: '256px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+
+        {/* Sticky top header */}
+        <StudentTopHeader
+          user={user}
+          logout={logout}
+          signOutLabel={t('nav.signout')}
+        />
+
+        {/* Page content */}
+        <main style={{ flex: 1, padding: '2rem', background: '#f8fafc' }}>
+          <Outlet />
+        </main>
+
+      </div>
     </div>
   )
 }

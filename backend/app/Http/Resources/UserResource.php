@@ -41,12 +41,16 @@ class UserResource extends JsonResource
             'student' => $this->whenLoaded('studentProfile', function () {
                 $profile = $this->studentProfile;
                 return [
-                    'id'         => $profile->id,
-                    'university' => $profile->university,
-                    'bio'        => $profile->bio,
-                    'cv_path'    => $profile->cv_path,
+                    'id'            => $profile->id,
+                    'university'    => $profile->university,
+                    'bio'           => $profile->bio,
+                    'cv_path'       => $profile->cv_path,
+                    'phone'         => $profile->phone,
+                    'linkedin_link' => $profile->linkedin_link,
+                    'github_link'   => $profile->github_link,
+                    'languages'     => $profile->languages,
                     // Skills are included when studentProfile.skills is eager-loaded
-                    'skills'     => $profile->relationLoaded('skills')
+                    'skills'        => $profile->relationLoaded('skills')
                         ? $profile->skills->map(fn ($s) => ['id' => $s->id, 'name' => $s->name])->values()
                         : [],
                 ];

@@ -22,6 +22,10 @@ class StudentProfile extends Model
         'university',
         'bio',
         'cv_path',
+        'phone',
+        'linkedin_link',
+        'github_link',
+        'languages',
     ];
 
     // -------------------------------------------------------------------------
