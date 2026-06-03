@@ -13,6 +13,7 @@ export default function StudentLayout() {
     { to: '/student/internships',  icon: '🔍', label: t('nav.browse')       },
     { to: '/student/saved',        icon: '🔖', label: t('nav.saved')        },
     { to: '/student/applications', icon: '📋', label: t('nav.applications') },
+    { to: '/student/feed',         icon: '📢', label: 'Community'           },
     { to: '/student/profile',      icon: '👤', label: t('nav.profile')      },
   ]
 

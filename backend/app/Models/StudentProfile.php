@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class StudentProfile extends Model
 {
@@ -47,5 +48,21 @@ class StudentProfile extends Model
         // Explicit column names because Eloquent would incorrectly derive
         // 'student_profile_id' from the class name, but the pivot column is 'student_id'.
         return $this->belongsToMany(Skill::class, 'skill_student', 'student_id', 'skill_id');
+    }
+
+    /**
+     * Community feed posts authored by this student.
+     */
+    public function posts(): MorphMany
+    {
+        return $this->morphMany(Post::class, 'author');
+    }
+
+    /**
+     * Community feed comments authored by this student.
+     */
+    public function feedComments(): MorphMany
+    {
+        return $this->morphMany(FeedComment::class, 'author');
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Company extends Model
 {
@@ -35,5 +36,21 @@ class Company extends Model
     public function internships(): HasMany
     {
         return $this->hasMany(Internship::class);
+    }
+
+    /**
+     * Community feed posts authored by this company.
+     */
+    public function posts(): MorphMany
+    {
+        return $this->morphMany(Post::class, 'author');
+    }
+
+    /**
+     * Community feed comments authored by this company.
+     */
+    public function feedComments(): MorphMany
+    {
+        return $this->morphMany(FeedComment::class, 'author');
     }
 }

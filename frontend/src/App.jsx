@@ -35,6 +35,7 @@ import InternshipDetails from './pages/student/InternshipDetails'
 import SavedInternships  from './pages/student/SavedInternships'
 import MyApplications  from './pages/student/MyApplications'
 import StudentProfile  from './pages/student/Profile'
+import CommunityFeed   from './pages/shared/CommunityFeed'
 
 /** Maps a role to its default landing page */
 const ROLE_HOME = {
@@ -97,6 +98,7 @@ export default function App() {
           <Route path="saved"        element={<SavedInternships />} />
           <Route path="applications" element={<MyApplications />} />
           <Route path="profile"      element={<StudentProfile />} />
+          <Route path="feed"         element={<CommunityFeed />} />
         </Route>
       </Route>
 
@@ -109,6 +111,7 @@ export default function App() {
           <Route path="internships/:id/applicants" element={<ViewApplicants />} />
           <Route path="applications"               element={<CompanyApplications />} />
           <Route path="profile"                    element={<CompanyProfile />} />
+          <Route path="feed"                       element={<CommunityFeed />} />
         </Route>
       </Route>
 

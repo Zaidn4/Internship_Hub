@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyProfileController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\InternshipController;
 use App\Http\Controllers\Api\SavedInternshipController;
 use App\Http\Controllers\Api\CommentController;
@@ -144,8 +145,18 @@ Route::middleware('auth:sanctum')->group(function () {
     // Student: sync selected skills to the pivot table (plain JSON, separate from multipart profile)
     Route::put('/student/skills', [StudentProfileController::class, 'syncSkills']);
 
+
     // ── Saved Internships ────────────────────────────────────────────────────
     Route::get('/student/saved-internships',     [SavedInternshipController::class, 'index']);
     Route::get('/student/saved-internship-ids',  [SavedInternshipController::class, 'savedIds']);
     Route::post('/student/internships/{id}/save', [SavedInternshipController::class, 'toggle']);
+
+    // ── Community Feed ───────────────────────────────────────────────────────
+    Route::get('/feed',                                  [FeedController::class, 'index']);
+    Route::post('/feed/posts',                           [FeedController::class, 'storePost']);
+    Route::put('/feed/posts/{post}',                     [FeedController::class, 'updatePost']);
+    Route::delete('/feed/posts/{post}',                  [FeedController::class, 'destroyPost']);
+    Route::post('/feed/posts/{post}/like',               [FeedController::class, 'toggleLike']);
+    Route::post('/feed/posts/{post}/comments',           [FeedController::class, 'storeComment']);
+    Route::delete('/feed/comments/{comment}',            [FeedController::class, 'destroyComment']);
 });

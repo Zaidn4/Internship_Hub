@@ -3,10 +3,11 @@ import { useAuth } from '../context/AuthContext'
 import CompanyTopHeader from '../components/layout/CompanyTopHeader'
 
 const NAV_ITEMS = [
-  { to: '/company/dashboard', icon: '◈', label: 'Dashboard' },
-  { to: '/company/internships', icon: '📌', label: 'My Listings' },
-  { to: '/company/applications', icon: '📥', label: 'Applications Received' },
-  { to: '/company/profile', icon: '🏢', label: 'Company Profile' },
+  { to: '/company/dashboard',    icon: '◈',  label: 'Dashboard'              },
+  { to: '/company/internships',  icon: '📌', label: 'My Listings'            },
+  { to: '/company/applications', icon: '📥', label: 'Applications Received'  },
+  { to: '/company/feed',         icon: '📢', label: 'Community'              },
+  { to: '/company/profile',      icon: '🏢', label: 'Company Profile'        },
 ]
 
 export default function CompanyLayout() {
