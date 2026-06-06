@@ -462,10 +462,32 @@ export default function CommunityFeed() {
     ? 'This will permanently delete the post and all its comments. This action cannot be undone.'
     : 'This will permanently delete this comment. This action cannot be undone.'
 
-  return (
-    <div style={{ maxWidth: '680px', margin: '0 auto', width: '100%' }}>
+  // ── Stat data (derived from live posts) ───────────────────────────────────
+  const totalLikes    = posts.reduce((s, p) => s + (p.likes_count ?? 0), 0)
+  const totalComments = posts.reduce((s, p) => s + p.comments.length, 0)
 
-      {/* ── Page Header ──────────────────────────────────────────────────── */}
+  // Last 4 unique authors across all posts for the "Active Members" widget
+  const seenIds = new Set()
+  const activeMembers = []
+  for (const p of posts) {
+    if (p.author && !seenIds.has(`${p.author.type}-${p.author.id}`)) {
+      seenIds.add(`${p.author.type}-${p.author.id}`)
+      activeMembers.push(p.author)
+    }
+    if (activeMembers.length >= 4) break
+  }
+
+  const card = {
+    background: '#ffffff', border: '1px solid #e2e8f0',
+    borderRadius: '1rem', padding: '1.25rem',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+  }
+
+  return (
+    /* ── Outer page wrapper — full width of the content area ────────────── */
+    <div style={{ width: '100%' }}>
+
+      {/* ── Page header (above the grid) ─────────────────────────────────── */}
       <div style={{ marginBottom: '1.5rem' }}>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', marginBottom: '0.2rem' }}>
           Community Feed
@@ -475,72 +497,172 @@ export default function CommunityFeed() {
         </p>
       </div>
 
-      {/* ── Create Post Card ─────────────────────────────────────────────── */}
+      {/* ── 2+1 column grid ──────────────────────────────────────────────── */}
       <div style={{
-        background: '#ffffff', border: '1px solid #e2e8f0',
-        borderRadius: '1rem', padding: '1.125rem',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.04)', marginBottom: '1.25rem',
-      }}>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-          <Avatar name={displayName} avatarUrl={user?.avatar_url} size={42} />
-          <form onSubmit={handlePost} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <textarea
-              value={postText} onChange={(e) => setPostText(e.target.value)}
-              placeholder="What's on your mind?" rows={3} maxLength={2000}
-              className="auth-input"
-              style={{ resize: 'none', fontSize: '0.9375rem', lineHeight: 1.6, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box' }}
-            />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
-                {postText.length > 0 ? `${postText.length} / 2000` : ''}
-              </span>
-              <button
-                type="submit" disabled={submitting || !postText.trim()}
-                className="auth-btn"
-                style={{ width: 'auto', padding: '0.5rem 1.5rem', opacity: postText.trim() ? 1 : 0.55 }}
-              >
-                {submitting ? <><span className="spinner" /> Posting…</> : 'Post'}
-              </button>
+        display: 'grid',
+        gridTemplateColumns: '1fr',          /* mobile: single column          */
+        gap: '1.5rem',
+      }}
+        className="feed-grid"               /* ← breakpoint handled in <style> */
+      >
+
+        {/* ══ LEFT / CENTRE — the feed ══════════════════════════════════════ */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: 0 }}>
+
+          {/* Create Post Card */}
+          <div style={{ ...card, padding: '1.125rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <Avatar name={displayName} avatarUrl={user?.avatar_url} size={42} />
+              <form onSubmit={handlePost} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <textarea
+                  value={postText} onChange={(e) => setPostText(e.target.value)}
+                  placeholder="What's on your mind?" rows={3} maxLength={2000}
+                  className="auth-input"
+                  style={{ resize: 'none', fontSize: '0.9375rem', lineHeight: 1.6, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box' }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                    {postText.length > 0 ? `${postText.length} / 2000` : ''}
+                  </span>
+                  <button
+                    type="submit" disabled={submitting || !postText.trim()}
+                    className="auth-btn"
+                    style={{ width: 'auto', padding: '0.5rem 1.5rem', opacity: postText.trim() ? 1 : 0.55 }}
+                  >
+                    {submitting ? <><span className="spinner" /> Posting…</> : 'Post'}
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
-      </div>
+          </div>
 
-      {/* ── States ───────────────────────────────────────────────────────── */}
-      {loading && (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-          <span className="spinner" style={{ width: '2rem', height: '2rem' }} />
-        </div>
-      )}
-      {error && (
-        <div style={{ padding: '1rem', borderRadius: '0.75rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', textAlign: 'center', fontSize: '0.875rem', marginBottom: '1rem' }}>
-          {error}
-          <button onClick={load} style={{ marginLeft: '0.75rem', background: 'none', border: 'none', color: '#dc2626', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Retry</button>
-        </div>
-      )}
-      {!loading && !error && posts.length === 0 && (
-        <div style={{ padding: '3rem 1.5rem', textAlign: 'center', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '1rem', color: '#94a3b8' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📢</div>
-          <p style={{ fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>The feed is empty</p>
-          <p style={{ fontSize: '0.875rem' }}>Be the first to post something!</p>
-        </div>
-      )}
+          {/* Loading / error / empty states */}
+          {loading && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+              <span className="spinner" style={{ width: '2rem', height: '2rem' }} />
+            </div>
+          )}
+          {error && (
+            <div style={{ padding: '1rem', borderRadius: '0.75rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', textAlign: 'center', fontSize: '0.875rem' }}>
+              {error}
+              <button onClick={load} style={{ marginLeft: '0.75rem', background: 'none', border: 'none', color: '#dc2626', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Retry</button>
+            </div>
+          )}
+          {!loading && !error && posts.length === 0 && (
+            <div style={{ padding: '3rem 1.5rem', textAlign: 'center', ...card, color: '#94a3b8' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📢</div>
+              <p style={{ fontWeight: 600, color: '#64748b', marginBottom: '0.25rem' }}>The feed is empty</p>
+              <p style={{ fontSize: '0.875rem' }}>Be the first to post something!</p>
+            </div>
+          )}
 
-      {/* ── Post list ────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            currentAuthorType={currentAuthorType}
-            currentAuthorId={currentAuthorId}
-            onPostUpdated={handlePostUpdated}
-            onLikeToggled={handleLikeToggled}
-            onCommentAdded={handleCommentAdded}
-            onRequestDeletePost={requestDeletePost}
-            onRequestDeleteComment={requestDeleteComment}
-          />
-        ))}
+          {/* Post list */}
+          {posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              currentAuthorType={currentAuthorType}
+              currentAuthorId={currentAuthorId}
+              onPostUpdated={handlePostUpdated}
+              onLikeToggled={handleLikeToggled}
+              onCommentAdded={handleCommentAdded}
+              onRequestDeletePost={requestDeletePost}
+              onRequestDeleteComment={requestDeleteComment}
+            />
+          ))}
+        </div>
+
+        {/* ══ RIGHT — sticky widgets ════════════════════════════════════════ */}
+        <div className="feed-sidebar" style={{ display: 'none', flexDirection: 'column', gap: '1.25rem' }}>
+
+          {/* ── Widget 1: About Community ─────────────────────────────────── */}
+          <div style={card}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem', paddingBottom: '0.875rem', borderBottom: '1px solid #f1f5f9' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '0.625rem', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>
+                🌐
+              </div>
+              <div>
+                <p style={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>About Community</p>
+                <p style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Internship Hub Network</p>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.8125rem', color: '#64748b', lineHeight: 1.65, marginBottom: '1.25rem' }}>
+              A shared space where <strong style={{ color: '#4f46e5' }}>students</strong> and <strong style={{ color: '#c2410c' }}>companies</strong> connect, share opportunities, ask questions, and grow together.
+            </p>
+
+            {/* Live stats */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+              {[
+                { label: 'Posts',    value: posts.length, icon: '📝' },
+                { label: 'Likes',    value: totalLikes,   icon: '❤️' },
+                { label: 'Comments', value: totalComments, icon: '💬' },
+              ].map(({ label, value, icon }) => (
+                <div key={label} style={{ textAlign: 'center', padding: '0.625rem 0.25rem', background: '#f8fafc', borderRadius: '0.625rem', border: '1px solid #f1f5f9' }}>
+                  <div style={{ fontSize: '1rem', marginBottom: '0.2rem' }}>{icon}</div>
+                  <div style={{ fontWeight: 800, fontSize: '1.0625rem', color: '#0f172a', lineHeight: 1 }}>{value}</div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '0.2rem', fontWeight: 500 }}>{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Widget 2: Active Members ──────────────────────────────────── */}
+          <div style={card}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', paddingBottom: '0.875rem', borderBottom: '1px solid #f1f5f9' }}>
+              <p style={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>Active Members</p>
+              <span style={{ fontSize: '0.7rem', fontWeight: 600, color: '#4f46e5', background: '#eef2ff', padding: '0.2rem 0.5rem', borderRadius: '9999px' }}>
+                Recently posted
+              </span>
+            </div>
+
+            {activeMembers.length === 0 ? (
+              <p style={{ color: '#94a3b8', fontSize: '0.8rem', textAlign: 'center', padding: '1rem 0' }}>No activity yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {activeMembers.map((member, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                    <Avatar name={member.name} avatarUrl={member.avatar_url} size={36} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {member.name}
+                      </p>
+                    </div>
+                    <span style={{
+                      flexShrink: 0, fontSize: '0.6rem', fontWeight: 700,
+                      padding: '0.15rem 0.45rem', borderRadius: '9999px', letterSpacing: '0.04em',
+                      background: member.type === 'company' ? '#fff7ed' : '#eef2ff',
+                      color:      member.type === 'company' ? '#c2410c'  : '#4338ca',
+                      border: `1px solid ${member.type === 'company' ? '#fed7aa' : '#c7d2fe'}`,
+                    }}>
+                      {member.type === 'company' ? 'Company' : 'Student'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ── Widget 3: Tips ────────────────────────────────────────────── */}
+          <div style={{ ...card, background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)', border: '1px solid #bae6fd' }}>
+            <p style={{ fontWeight: 700, fontSize: '0.875rem', color: '#0c4a6e', marginBottom: '0.75rem' }}>
+              💡 Community Tips
+            </p>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {[
+                'Share internship openings to reach students faster.',
+                'Ask questions — companies love engaged candidates.',
+                'Like posts you find helpful to boost visibility.',
+              ].map((tip, i) => (
+                <li key={i} style={{ display: 'flex', gap: '0.5rem', fontSize: '0.78rem', color: '#0369a1', lineHeight: 1.5 }}>
+                  <span style={{ flexShrink: 0, marginTop: '0.1rem' }}>›</span>
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        </div>
       </div>
 
       {/* ── Confirmation Modal ───────────────────────────────────────────── */}
@@ -553,6 +675,21 @@ export default function CommunityFeed() {
         onConfirm={confirmDeletion}
       />
 
+      {/* ── Responsive grid styles injected once ─────────────────────────── */}
+      <style>{`
+        @media (min-width: 1024px) {
+          .feed-grid {
+            grid-template-columns: 1fr 320px !important;
+          }
+          .feed-sidebar {
+            display: flex !important;
+            position: sticky;
+            top: 88px;
+            height: fit-content;
+            align-self: start;
+          }
+        }
+      `}</style>
     </div>
   )
 }
