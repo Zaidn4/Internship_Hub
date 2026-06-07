@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FeedComment;
 use App\Models\Post;
 use App\Models\PostLike;
+use App\Notifications\NewFeedCommentNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -234,6 +235,23 @@ class FeedController extends Controller
         ]);
 
         $comment->load(['author', 'author.user']);
+
+        // ── Notification ─────────────────────────────────────────────────────
+        // Only notify the post owner when the commenter is a different person.
+        $post->load('author.user');
+        $postAuthor = $post->author;
+
+        $isDifferentAuthor = $postAuthor &&
+            ($post->author_type !== get_class($author) || $post->author_id !== $author->id);
+
+        if ($isDifferentAuthor && $postAuthor->user) {
+            // Resolve commenter display name
+            $commenterName = $author instanceof \App\Models\StudentProfile
+                ? ($author->user->name ?? 'A student')
+                : ($author->company_name ?? 'A company');
+
+            $postAuthor->user->notify(new NewFeedCommentNotification($comment, $commenterName));
+        }
 
         return response()->json([
             'message' => 'Comment added.',
