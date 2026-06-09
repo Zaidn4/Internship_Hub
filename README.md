@@ -1,5 +1,3 @@
----
-
 <div align="center">
 
 ## 🎓 PROJET FIN D'ÉTUDES
