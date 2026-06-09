@@ -1,3 +1,19 @@
+---
+
+<div align="center">
+
+## 🎓 PROJET FIN D'ÉTUDES
+
+**Filière :** Développement Digital — DEV201
+
+| Étudiant | Étudiante |
+|:---:|:---:|
+| **Zaid Nouniou** | **Marwa El Khanchoufi** |
+
+</div>
+
+---
+
 # InternshipHub
 
 > A modern, multi-role SaaS platform connecting students with internship opportunities and helping companies discover top talent.
